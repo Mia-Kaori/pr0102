@@ -78,7 +78,7 @@ ping 192.168.0.10
 ├── README.md
 ├── imagenes
 └── scripts
-    ├── .env.example
+    ├── .env
     └── webmin-install.sh
 ```
 
@@ -86,8 +86,8 @@ ping 192.168.0.10
 |---|---|
 | `README.md` | Este documento técnico |
 | `imagenes/` | Capturas de pantalla del proceso |
-| `scripts/webmin-install.sh` | Script que automatiza la instalación y configuración de Webmin |
 | `scripts/.env` | Variables de configuración reales (contraseña no incluida)|
+| `scripts/webmin-install.sh` | Script que automatiza la instalación y configuración de Webmin |
 
 ## 5. Preparación del servidor: SSH
 
@@ -287,6 +287,50 @@ Se habilita el servicio para que arranque con el sistema, se reinicia para aplic
 
 <image src="imagenes/imagen10.png">
 
+## 8. Acceso a Webmin
 
+Desde el navegador de Windows se accede a:
 
+```
+https://192.168.0.10:10000
+```
 
+Webmin usa un certificado **autofirmado** (no emitido por una autoridad de certificación), así que el navegador muestra un aviso de seguridad. En un entorno de prácticas se puede continuar pulsando *Configuración avanzada → Continuar*.
+
+Se inicia sesión con el usuario `root` y la contraseña definida en el `.env`:
+
+<image src="imagenes/imagen11.png">
+
+Panel principal de Webmin, con la información del sistema:
+
+<image src="imagenes/imagen12.png">
+
+## 9. Gestión del archivo .env
+
+Los archivos `.env` se utilizan para guardar información delicada, como contraseñas o claves de API. Por eso no deberían subirse nunca con datos reales a un repositorio público: cualquier persona que lo visitara podría leerlos.
+
+En esta práctica, el archivo `scripts/.env` se incluye en el repositorio porque forma parte de la estructura que pide el enunciado, pero **con una contraseña de ejemplo**, no con la real:
+
+```bash
+# Contraseña del usuario root de Webmin
+# Sustituir por una contraseña propia antes de ejecutar el script
+WEBMIN_ROOT_PASSWORD=PonTuContrasena123
+```
+
+La contraseña real solo existe en el `.env` del servidor, que se creó directamente allí con `nano` desde la sesión SSH y nunca ha salido de él.
+
+De este modo, el repositorio muestra qué variables necesita el script sin exponer ningún dato personal. Quien quiera usarlo solo tiene que editar el archivo y poner su propia contraseña antes de ejecutar la instalación:
+
+```bash
+nano scripts/.env
+```
+## 10. Problemas encontrados y soluciones
+
+| Problema | Causa | Solución |
+|---|---|---|
+| `Permission denied` al ejecutar el script | El archivo no tiene permiso de ejecución | `chmod +x webmin-install.sh` |
+| El script se detiene con `ERROR: ejecuta el script con sudo` | Se lanzó sin permisos de administrador | Ejecutarlo con `sudo ./webmin-install.sh` |
+| `Permission denied` al conectar por SSH | Usuario o contraseña incorrectos | Comprobar el usuario con `whoami` en el servidor |
+| El navegador no carga `https://192.168.0.10:10000` | Puerto cerrado o servicio parado | Comprobar `sudo ufw status` y `sudo systemctl status webmin` |
+| Se usa `http://` en lugar de `https://` | Webmin solo acepta conexiones cifradas | Escribir la URL con `https://` |
+| Error de login en Webmin | Contraseña de root de Webmin incorrecta | `sudo /usr/share/webmin/changepass.pl /etc/webmin root nueva_contraseña` |
