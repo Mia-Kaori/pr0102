@@ -73,6 +73,30 @@ ping 192.168.0.10
 
 ## 4. Estructura del repositorio
 
+## 5. Preparación del servidor: SSH
+
+El enunciado exige que el servicio SSH esté instalado, configurado y activo en el servidor antes de empezar. Desde la consola de la máquina virtual:
+
+```bash
+sudo apt update
+sudo apt install -y openssh-server
+sudo systemctl enable --now ssh
+sudo systemctl status ssh
+```
+
+- `openssh-server` es el paquete que permite recibir conexiones SSH.
+- `systemctl enable --now` arranca el servicio y lo deja configurado para iniciarse automáticamente en cada arranque.
+
+!<image src=imagen3.png>
+
+A continuación, desde PowerShell en Windows nos conectamos al servidor por la red solo-anfitrión:
+
+```powershell
+ssh alumno@192.168.0.10
+```
+!<image src="imagen4.png>
+
+A partir de este punto, todo el trabajo en el servidor se realiza de forma remota a través de esta sesión SSH.
 
 
 
