@@ -1,4 +1,4 @@
-# pr0102 - Instalación de Webmin en Ubuntu Server
+# PR0102 - Instalación de Webmin en Ubuntu Server
 ## 1. Introducción
 
 [Webmin](https://webmin.com/) es una herramienta de administración de sistemas Linux a través de una interfaz web. 
