@@ -73,9 +73,25 @@ ping 192.168.0.10
 
 ## 4. Estructura del repositorio
 
+```
+.
+├── README.md
+├── imagenes
+└── scripts
+    ├── .env.example
+    └── webmin-install.sh
+```
+
+| Archivo | Función |
+|---|---|
+| `README.md` | Este documento técnico |
+| `imagenes/` | Capturas de pantalla del proceso |
+| `scripts/webmin-install.sh` | Script que automatiza la instalación y configuración de Webmin |
+| `scripts/.env` | Variables de configuración reales (contraseña no incluida)|
+
 ## 5. Preparación del servidor: SSH
 
-El enunciado exige que el servicio SSH esté instalado, configurado y activo en el servidor antes de empezar. Desde la consola de la máquina virtual:
+Según el enunciado, el servicio SSH debe estar instalado, configurado y activo en el servidor antes de comenzar, ya que toda la práctica se realiza en remoto desde el cliente Windows. Desde la consola de la máquina virtual se instala el servidor SSH y se deja activado:
 
 ```bash
 sudo apt update
@@ -84,19 +100,24 @@ sudo systemctl enable --now ssh
 sudo systemctl status ssh
 ```
 
-- `openssh-server` es el paquete que permite recibir conexiones SSH.
-- `systemctl enable --now` arranca el servicio y lo deja configurado para iniciarse automáticamente en cada arranque.
+- `openssh-server` es el paquete que permite al servidor aceptar conexiones SSH.
+- `systemctl enable --now` arranca el servicio en ese momento y hace que se inicie solo en cada arranque del sistema.
+
+En la salida se comprueba que el servicio está en estado `active (running)` y que escucha conexiones en el puerto 22:
 
 <image src=imagen3.png>
 
-A continuación, desde PowerShell en Windows nos conectamos al servidor por la red solo-anfitrión:
+A continuación, desde PowerShell en Windows, se abre la conexión con el servidor a través de la red solo-anfitrión:
 
 ```powershell
 ssh alumno@192.168.0.10
 ```
+
+La primera vez, el cliente pide confirmar la huella (*fingerprint*) del servidor, que queda guardada para las siguientes conexiones. Tras introducir la contraseña, se obtiene una terminal del servidor:
+
 !<image src="imagen4.png>
 
-A partir de este punto, todo el trabajo en el servidor se realiza de forma remota a través de esta sesión SSH.
+A partir de este punto, todos los comandos del servidor se ejecutan desde esta sesión SSH.
 
 ## 6. Scripts de automatización
 
@@ -163,7 +184,108 @@ chmod +x webmin-install.sh
 
 <image src="imagen5.png>
 
+## 7. Ejecución del script paso a paso
 
+### 7.1. Ejecución del script
+
+Los scripts se crean directamente en el servidor desde la sesión SSH, con el editor `nano`, dentro de la carpeta `~/scripts`:
+
+```bash
+mkdir ~/scripts
+cd ~/scripts
+nano .env
+nano webmin-install.sh
+chmod +x webmin-install.sh
+```
+
+Una vez creados y con permiso de ejecución, se lanza el script con permisos de administrador:
+
+```bash
+sudo ./webmin-install.sh
+```
+
+Gracias a la opción `-x`, cada comando aparece en pantalla antes de ejecutarse, así que se puede seguir en directo cada una de las seis tareas que se describen a continuación.
+
+### 7.2. Actualizar los repositorios
+
+```bash
+apt update
+apt upgrade -y
+```
+
+`apt update` descarga la lista actualizada de paquetes disponibles y `apt upgrade` actualiza los que ya están instalados. El servidor accede a internet a través del adaptador NAT.
+
+<image src="imagen6.png>
+
+### 7.3. Instalar las dependencias
+
+```bash
+apt install -y software-properties-common apt-transport-https wget gnupg
+```
+
+| Paquete | Para qué se usa |
+|---|---|
+| `software-properties-common` | Herramientas para gestionar repositorios de software |
+| `apt-transport-https` | Permite a `apt` descargar paquetes por HTTPS |
+| `wget` | Descarga la clave GPG del repositorio |
+| `gnupg` | Convierte la clave al formato que usa `apt` |
+
+### 7.4. Añadir el repositorio de Webmin
+
+```bash
+wget -qO- "$WEBMIN_KEY_URL" | gpg --dearmor --yes -o /usr/share/keyrings/webmin-developers.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/webmin-developers.gpg] $WEBMIN_REPO_URL stable contrib" \
+  > /etc/apt/sources.list.d/webmin.list
+
+apt update
+```
+
+1. Se descarga la **clave GPG** de los desarrolladores de Webmin. `apt` la usa para verificar que los paquetes descargados son auténticos y no han sido modificados.
+2. Se crea el archivo `/etc/apt/sources.list.d/webmin.list` con la dirección del repositorio. La opción `signed-by` indica qué clave firma ese repositorio.
+3. Se vuelve a ejecutar `apt update` para que el sistema conozca los paquetes del nuevo repositorio.
+
+<image src="imagen7.png>
+
+### 7.5. Instalar Webmin
+
+```bash
+apt install -y --install-recommends webmin
+/usr/share/webmin/changepass.pl /etc/webmin root "$WEBMIN_ROOT_PASSWORD"
+```
+
+En Ubuntu la cuenta `root` no está activada, pero es necesario ser `root` en Webmin para modificar la configuración de los servicios. Por eso se asigna una contraseña al usuario `root` de Webmin con el script `changepass.pl`, tomándola de la variable del `.env`.
+
+<image src="imagen8.png>
+
+### 7.6. Configurar el cortafuegos
+
+```bash
+ufw allow OpenSSH
+ufw allow "$WEBMIN_PORT"/tcp
+ufw --force enable
+ufw status verbose
+```
+
+Se usa UFW (*Uncomplicated Firewall*), el cortafuegos de Ubuntu.
+
+- La regla de **SSH se añade antes de activar el cortafuegos**. Como el script se ejecuta desde una sesión SSH, activar UFW sin esta regla cortaría la conexión.
+- Se abre el puerto **10000/tcp**, que es el que usa Webmin.
+- `--force` evita que `ufw enable` pida confirmación, para que el script no se detenga esperando una respuesta.
+
+<image src="imagen9.png>
+
+### 7.7. Ejecutar Webmin
+
+```bash
+systemctl enable webmin
+systemctl restart webmin
+systemctl status webmin --no-pager
+```
+
+Se habilita el servicio para que arranque con el sistema, se reinicia para aplicar la configuración y se comprueba que está activo (`active (running)`).
+
+<image src="imagen10.png>
 
 
 
