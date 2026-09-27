@@ -87,7 +87,7 @@ sudo systemctl status ssh
 - `openssh-server` es el paquete que permite recibir conexiones SSH.
 - `systemctl enable --now` arranca el servicio y lo deja configurado para iniciarse automáticamente en cada arranque.
 
-!<image src=imagen3.png>
+<image src=imagen3.png>
 
 A continuación, desde PowerShell en Windows nos conectamos al servidor por la red solo-anfitrión:
 
@@ -161,7 +161,7 @@ Para poder ejecutarlo, primero se le da permiso de ejecución:
 chmod +x webmin-install.sh
 ```
 
-!<image src="imagen5.png>
+<image src="imagen5.png>
 
 
 
