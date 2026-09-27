@@ -18,6 +18,7 @@
 8. [Acceso a Webmin](#8-acceso-a-webmin)
 9. [Gestión del archivo .env](#9-gestión-del-archivo-env)
 10. [Problemas encontrados y soluciones](#10-problemas-encontrados-y-soluciones)
+11. [Conclusión](#11-conclusión)
 
 ---
 
@@ -352,3 +353,11 @@ nano scripts/.env
 |---|---|---|
 | `Permission denied` al ejecutar el script | El archivo no tiene permiso de ejecución | `chmod +x webmin-install.sh` |
 | `Permission denied` al conectar por SSH | Usuario o contraseña incorrectos | Comprobar el usuario con `whoami` en el servidor |
+
+## 11. Conclusión
+
+Se ha instalado y configurado Webmin en un servidor Ubuntu Server de forma totalmente automatizada, mediante un script de Bash que realiza las seis tareas de la práctica sin intervención manual. Todo el trabajo sobre el servidor se ha hecho en remoto por SSH desde el cliente Windows, y el acceso final a Webmin, desde su navegador, a través de la red solo-anfitrión.
+
+Separar la configuración en el archivo `.env` permite reutilizar el script en otro servidor cambiando solo sus variables, sin tocar el código. Además, la contraseña real no se ha publicado en el repositorio: en GitHub solo aparece un valor de ejemplo.
+
+Por último, la práctica muestra los límites de una arquitectura con un único servidor: es sencilla de montar, pero si ese servidor falla, el servicio deja de estar disponible.
