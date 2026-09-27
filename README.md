@@ -105,7 +105,7 @@ sudo systemctl status ssh
 
 En la salida se comprueba que el servicio está en estado `active (running)` y que escucha conexiones en el puerto 22:
 
-<image src=imagen3.png>
+<image src="imagenes/imagen3.png">
 
 A continuación, desde PowerShell en Windows, se abre la conexión con el servidor a través de la red solo-anfitrión:
 
@@ -115,7 +115,7 @@ ssh alumno@192.168.0.10
 
 La primera vez, el cliente pide confirmar la huella (*fingerprint*) del servidor, que queda guardada para las siguientes conexiones. Tras introducir la contraseña, se obtiene una terminal del servidor:
 
-!<image src="imagen4.png>
+<image src="imagenes/imagen4.png">
 
 A partir de este punto, todos los comandos del servidor se ejecutan desde esta sesión SSH.
 
@@ -182,7 +182,7 @@ Para poder ejecutarlo, primero se le da permiso de ejecución:
 chmod +x webmin-install.sh
 ```
 
-<image src="imagen5.png>
+<image src="imagenes/imagen5.png">
 
 ## 7. Ejecución del script paso a paso
 
@@ -215,7 +215,7 @@ apt upgrade -y
 
 `apt update` descarga la lista actualizada de paquetes disponibles y `apt upgrade` actualiza los que ya están instalados. El servidor accede a internet a través del adaptador NAT.
 
-<image src="imagen6.png>
+<image src="imagenes/imagen6.png">
 
 ### 7.3. Instalar las dependencias
 
@@ -245,7 +245,7 @@ apt update
 2. Se crea el archivo `/etc/apt/sources.list.d/webmin.list` con la dirección del repositorio. La opción `signed-by` indica qué clave firma ese repositorio.
 3. Se vuelve a ejecutar `apt update` para que el sistema conozca los paquetes del nuevo repositorio.
 
-<image src="imagen7.png>
+<image src="imagenes/imagen7.png">
 
 ### 7.5. Instalar Webmin
 
@@ -256,7 +256,7 @@ apt install -y --install-recommends webmin
 
 En Ubuntu la cuenta `root` no está activada, pero es necesario ser `root` en Webmin para modificar la configuración de los servicios. Por eso se asigna una contraseña al usuario `root` de Webmin con el script `changepass.pl`, tomándola de la variable del `.env`.
 
-<image src="imagen8.png>
+<image src="imagenes/imagen8.png">
 
 ### 7.6. Configurar el cortafuegos
 
@@ -273,7 +273,7 @@ Se usa UFW (*Uncomplicated Firewall*), el cortafuegos de Ubuntu.
 - Se abre el puerto **10000/tcp**, que es el que usa Webmin.
 - `--force` evita que `ufw enable` pida confirmación, para que el script no se detenga esperando una respuesta.
 
-<image src="imagen9.png>
+<image src="imagenes/imagen9.png">
 
 ### 7.7. Ejecutar Webmin
 
@@ -285,7 +285,7 @@ systemctl status webmin --no-pager
 
 Se habilita el servicio para que arranque con el sistema, se reinicia para aplicar la configuración y se comprueba que está activo (`active (running)`).
 
-<image src="imagen10.png>
+<image src="imagenes/imagen10.png">
 
 
 
