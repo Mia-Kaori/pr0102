@@ -98,6 +98,72 @@ ssh alumno@192.168.0.10
 
 A partir de este punto, todo el trabajo en el servidor se realiza de forma remota a través de esta sesión SSH.
 
+## 6. Scripts de automatización
+
+### 6.1. Archivo `.env`
+
+Para que el script no tenga valores escritos directamente en su código, toda la configuración se guarda aparte en el archivo `.env`. 
+El script lo carga al empezar con la orden `source`, y a partir de ese momento puede usar cada variable como si la hubiera definido él mismo.
+
+La ventaja de trabajar así es que, si en otro servidor cambian la IP, el puerto o la contraseña, basta con editar el `.env`: el script sigue siendo el mismo y no hay que tocar su lógica.
+
+```bash
+SERVER_IP=192.168.0.10
+WEBMIN_PORT=10000
+WEBMIN_ROOT_PASSWORD=********
+WEBMIN_REPO_URL=https://download.webmin.com/download/newkey/repository
+WEBMIN_KEY_URL=https://download.webmin.com/developers-key.asc
+```
+
+| Variable | Para qué la usa el script |
+|---|---|
+| `SERVER_IP` | Mostrar al final la dirección desde la que acceder a Webmin |
+| `WEBMIN_PORT` | Abrir en el cortafuegos el puerto por el que escucha Webmin |
+| `WEBMIN_ROOT_PASSWORD` | Asignar la contraseña al usuario `root` de Webmin |
+| `WEBMIN_REPO_URL` | Indicar a `apt` de dónde descargar Webmin |
+| `WEBMIN_KEY_URL` | Descargar la clave que verifica que los paquetes son auténticos |
+
+### 6.2. Script `webmin-install.sh`
+
+Este script automatiza toda la instalación: al ejecutarlo, realiza una tras otra las seis tareas que pide la práctica, sin que haya que escribir cada comando a mano. Se lanza con permisos de administrador, porque instalar paquetes y configurar el cortafuegos son cambios en el sistema:
+
+```bash
+sudo ./webmin-install.sh
+```
+
+La primera línea del script le indica al sistema qué intérprete debe usar para leerlo, en este caso Bash:
+
+```bash
+#!/bin/bash
+```
+
+Justo después se activan dos opciones que hacen el script más seguro y más fácil de seguir:
+
+```bash
+set -ex
+```
+
+| Opción | Qué hace |
+|---|---|
+| `-e` | Si cualquier comando falla, el script se detiene en ese punto. Así se evita continuar con una instalación incompleta |
+| `-x` | Antes de ejecutar cada comando, lo muestra en pantalla. Permite ver en todo momento qué paso se está haciendo |
+
+Antes de empezar con la instalación, el script realiza dos comprobaciones:
+
+1. Que se está ejecutando con `sudo`. Si no, avisa del error y se para.
+2. Que existe el archivo `.env` en la misma carpeta. Si falta, también se detiene, ya que sin él no tendría la configuración necesaria.
+
+Si todo está correcto, carga las variables del `.env` y pasa a las seis tareas, que se explican una a una en el apartado 7.
+
+Para poder ejecutarlo, primero se le da permiso de ejecución:
+
+```bash
+chmod +x webmin-install.sh
+```
+
+!<image src="imagen5.png>
+
+
 
 
 
