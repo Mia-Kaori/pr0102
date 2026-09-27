@@ -52,3 +52,21 @@ una sola máquina.
 Se usan dos adaptadores porque cada uno cubre una necesidad distinta: la **NAT** permite que Ubuntu descargue paquetes 
 de internet (necesario para instalar Webmin con `apt`), y la red **solo-anfitrión** permite que Windows llegue a Ubuntu 
 para conectarse por SSH y abrir Webmin en el navegador.
+
+### Comprobación de la red
+
+En el servidor, `ip a` muestra la IP fija en `enp0s8`:
+
+```bash
+ip a
+```
+
+<image src="imagen1.png">
+
+Desde el `cmd` de Windows se comprueba que el servidor responde:
+
+```
+ping 192.168.0.10
+```
+
+<image src="imagen2.png">
