@@ -61,7 +61,7 @@ En el servidor, `ip a` muestra la IP fija en `enp0s8`:
 ip a
 ```
 
-<image src="imagenes/imagen1.PNG">
+<image src="imagenes/imagen1.png">
 
 Desde el `cmd` de Windows se comprueba que el servidor responde:
 
@@ -69,4 +69,12 @@ Desde el `cmd` de Windows se comprueba que el servidor responde:
 ping 192.168.0.10
 ```
 
-<image src="imagenes/imagen2.PNG">
+<image src="imagenes/imagen2.png">
+
+## 4. Estructura del repositorio
+
+
+
+
+
+
