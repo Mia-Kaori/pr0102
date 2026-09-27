@@ -1,4 +1,26 @@
 # PR0102 - Instalación de Webmin en Ubuntu Server
+
+**Módulo:** Despliegue de Aplicaciones Web
+**Curso:** 2026/2027
+**Alumna:** Mia Kaori Carrera Salcedo
+
+---
+
+## Índice
+
+1. [Introducción](#1-introducción)
+2. [Arquitectura web con un único servidor](#2-arquitectura-web-con-un-único-servidor)
+3. [Entorno de trabajo](#3-entorno-de-trabajo)
+4. [Estructura del repositorio](#4-estructura-del-repositorio)
+5. [Preparación del servidor: SSH](#5-preparación-del-servidor-ssh)
+6. [Scripts de automatización](#6-scripts-de-automatización)
+7. [Ejecución del script paso a paso](#7-ejecución-del-script-paso-a-paso)
+8. [Acceso a Webmin](#8-acceso-a-webmin)
+9. [Gestión del archivo .env](#9-gestión-del-archivo-env)
+10. [Problemas encontrados y soluciones](#10-problemas-encontrados-y-soluciones)
+
+---
+
 ## 1. Introducción
 
 [Webmin](https://webmin.com/) es una herramienta de administración de sistemas Linux a través de una interfaz web. 
@@ -329,8 +351,4 @@ nano scripts/.env
 | Problema | Causa | Solución |
 |---|---|---|
 | `Permission denied` al ejecutar el script | El archivo no tiene permiso de ejecución | `chmod +x webmin-install.sh` |
-| El script se detiene con `ERROR: ejecuta el script con sudo` | Se lanzó sin permisos de administrador | Ejecutarlo con `sudo ./webmin-install.sh` |
 | `Permission denied` al conectar por SSH | Usuario o contraseña incorrectos | Comprobar el usuario con `whoami` en el servidor |
-| El navegador no carga `https://192.168.0.10:10000` | Puerto cerrado o servicio parado | Comprobar `sudo ufw status` y `sudo systemctl status webmin` |
-| Se usa `http://` en lugar de `https://` | Webmin solo acepta conexiones cifradas | Escribir la URL con `https://` |
-| Error de login en Webmin | Contraseña de root de Webmin incorrecta | `sudo /usr/share/webmin/changepass.pl /etc/webmin root nueva_contraseña` |
