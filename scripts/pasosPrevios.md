@@ -13,3 +13,9 @@ nano .env
 ```bash
 nano webmin-install.sh
 ```
+
+## Paso 4 - Comprobar que están bien
+```bash
+ls -la
+cat .env
+```
